@@ -11,10 +11,7 @@ exports.calculateSplit = (splitType, amount, participants) => {
     }
 
     if (splitType === 'percentage') {
-        calculatedParticipants = participants.map(p => ({
-            ...p,
-            amountOwed: (p.percentageOwed / 100) * amount
-        }));
+        calculatedParticipants = participants.map(p => ({...p, amountOwed: (p.percentageOwed / 100) * amount }));
     }
 
     return calculatedParticipants;
