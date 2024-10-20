@@ -2,7 +2,7 @@ exports.calculateSplit = (splitType, amount, participants, users) => {
     switch (splitType) {
 
         case 'equal':
-
+            //percentage will be set by default
             const perPerson = amount / participants.length;
             
             return users.map(u => ({
@@ -13,7 +13,7 @@ exports.calculateSplit = (splitType, amount, participants, users) => {
             }));
 
         case 'percentage':
-
+            
             const totalPercentage = participants.reduce((sum, p) => sum + p.percentageOwed, 0);
 
             if (Math.abs(totalPercentage - 100) > 0.01) { 

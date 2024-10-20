@@ -8,7 +8,7 @@ const expenseSchema = new mongoose.Schema({
         {
             userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
             email: { type: String, required: true },
-            amountOwed: { type: Number, required: true }, // This is causing the validation error
+            amountOwed: { type: Number, required: true }, 
             percentageOwed: { type: Number }
         }
     ],
