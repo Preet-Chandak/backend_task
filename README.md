@@ -4,6 +4,7 @@ A simple, user-friendly application designed to manage and share daily expenses 
 
 ## **Quick Links**
 - **GitHub Repository**: [Preet-Chandak/backend_task](https://github.com/Preet-Chandak/backend_task)
+- **Postman API Documentation**: [API Documentation](https://documenter.getpostman.com/view/33333489/2sAXxY2TPQ)
 - **Live Deployment (AWS)**: [Daily Expenses Sharing App](http://3.110.217.208/)
 - **Portfolio Website**: [Preet Chandak](https://www.preetchandak.in/)
 - **LinkedIn Profile**: [Preet Chandak](https://www.linkedin.com/in/preet-chandak/)
