@@ -1,18 +1,35 @@
-exports.calculateSplit = (splitType, amount, participants) => {
-    let calculatedParticipants = [];
+const Expense = require('../models/expenseModel');
+const User = require('../models/userModel');
+const { calculateSplit } = require('../utils/splitUtils'); 
 
-    if (splitType === 'equal') {
-        const perPerson = amount / participants.length;
-        calculatedParticipants = participants.map(p => ({ ...p, amountOwed: perPerson }));
+exports.addExpense = async ({ description, amount, splitType, participants, createdBy }) => {
+    const creator = await User.findById(createdBy);
+    if (!creator) {
+        throw new Error('Creator user not found.');
     }
 
-    if (splitType === 'exact') {
-        calculatedParticipants = participants;
+    const participantEmails = participants.map(p => p.email);
+    const allEmails = [...new Set([...participantEmails, creator.email])];
+    const users = await User.find({ email: { $in: allEmails } });
+    
+    if (users.length !== allEmails.length) {
+        throw new Error('Some participants are not registered users.');
     }
 
-    if (splitType === 'percentage') {
-        calculatedParticipants = participants.map(p => ({...p, amountOwed: (p.percentageOwed / 100) * amount }));
-    }
+    try {
+        const calculatedParticipants = calculateSplit(splitType, amount, participants, users);
 
-    return calculatedParticipants;
+        const expense = new Expense({
+            description,
+            amount,
+            splitType,
+            participants: calculatedParticipants,
+            createdBy
+        });
+
+        await expense.save();
+        return expense;
+    } catch (error) {
+        throw new Error(`Error calculating split: ${error.message}`);
+    }
 };

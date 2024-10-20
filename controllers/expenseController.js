@@ -1,33 +1,48 @@
 const Expense = require('../models/expenseModel');
-const User = require('../models/userModel');
-const { calculateSplit } = require('../services/expenseService');
+const expenseService = require('../services/expenseService');
 
 exports.addExpense = async (req, res) => {
-    const { description, amount, splitType, participants } = req.body;
-    const createdBy = req.user.id;
+    try {
+        const { description, amount, splitType, participants } = req.body;
+        const createdBy = req.user.id;
 
-    const calculatedParticipants = calculateSplit(splitType, amount, participants);
+        if (!Array.isArray(participants)) {
+            return res.status(400).json({ error: "participants must be an array" });
+        }
 
-    const expense = new Expense({
-        description,
-        amount,
-        splitType,
-        participants: calculatedParticipants,
-        createdBy
-    });
+        const expense = await expenseService.addExpense({
+            description,
+            amount,
+            splitType,
+            participants,
+            createdBy
+        });
 
-    await expense.save();
-    res.status(201).json(expense);
+        res.status(201).json(expense);
+    } catch (error) {
+        console.error("Error adding expense:", error);
+        res.status(500).json({ error: error.message || "Internal Server Error" });
+    }
 };
 
 exports.getUserExpenses = async (req, res) => {
-    const expenses = await Expense.find({ 'participants.userId': req.user.id });
-    res.json(expenses);
+    try {
+        const expenses = await Expense.find({ 'participants.userId': req.user.id });
+        res.json(expenses);
+    } catch (error) {
+        console.error("Error fetching user expenses:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
 };
 
 exports.getOverallExpenses = async (req, res) => {
-    const expenses = await Expense.find();
-    res.json(expenses);
+    try {
+        const expenses = await Expense.find();
+        res.json(expenses);
+    } catch (error) {
+        console.error("Error fetching overall expenses:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
 };
 
 exports.downloadBalanceSheet = async (req, res) => {
